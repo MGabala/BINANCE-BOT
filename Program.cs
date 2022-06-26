@@ -15,7 +15,7 @@ namespace ROBOT
             {
                 var log = host.Services.GetRequiredService<ILogger<MainClass>>();
                 log.LogInformation("Host created");
-                //await serviceProvider.GetService<IIntegrationService>().Run();
+                await serviceProvider.GetService<IIntegrationService>().Run();
             }
             catch (Exception ex)
             {
@@ -35,7 +35,7 @@ namespace ROBOT
         {
             serviceCollection.AddLogging(config => config.AddDebug().AddConsole());
 
-            
+            serviceCollection.AddScoped<IIntegrationService, CRUD_TESTNET>();
         }
     }
 }
