@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using ROBOT.Services;
-
-namespace ROBOT
+﻿namespace ROBOT
 {
     internal class MainClass
     {
@@ -14,7 +9,7 @@ namespace ROBOT
             try
             {
                 var log = host.Services.GetRequiredService<ILogger<MainClass>>();
-                log.LogInformation("Host created");
+                log.LogInformation("Host created, checking..");
                 await serviceProvider.GetService<IIntegrationService>().Run();
             }
             catch (Exception ex)
