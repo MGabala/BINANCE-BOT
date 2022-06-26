@@ -13,6 +13,8 @@
         public async Task Run()
         {
             await GetCoinPrice();
+            await GetOrderBook();
+            await GetTradeList();
         }
 
         private async Task GetCoinPrice()
@@ -21,6 +23,20 @@
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"BNB price: {content.ToString()}");
+        }
+        private async Task GetOrderBook()
+        {
+            var response = await _httpClient.GetAsync("/api/v3/depth?symbol=BNBUSDT");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Order Book Depth: {content.Count()}");
+        }
+        private async Task GetTradeList()
+        {
+            var response = await _httpClient.GetAsync("/api/v3/trades?symbol=BNBUSDT");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Trade list: {content.ToString()}");
         }
     }
 }
