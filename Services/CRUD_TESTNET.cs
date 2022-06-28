@@ -12,9 +12,18 @@
         }
         public async Task Run()
         {
+            await CheckConnection();
             await GetCoinPrice();
             await GetOrderBook();
             await GetTradeList();
+
+        }
+
+        private async Task CheckConnection()
+        {
+            var response = await _httpClient.GetAsync("/api/v3/ping");
+            response.EnsureSuccessStatusCode();
+            Console.WriteLine($"Connection status: {response.StatusCode}");
         }
 
         private async Task GetCoinPrice()
