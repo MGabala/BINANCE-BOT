@@ -15,13 +15,13 @@
             Console.WriteLine("Welcome in ROBOT - best cryptocurrencies bot for trading and earning money...");
             Console.Write("Which pair you are interested in? ");
             var pair = Console.ReadLine();
-            //await GETCheckConnectionState();
-            //await GETCoinPrice();
-            //await GETOrderBook();
-            //await GETTradeList();
-            //await GETCheckServerTime();
-            //await GETExchangeInformation();
-            await GETRecentTradesList(pair);
+            await GETCheckConnectionState();
+            await GETCoinPrice(pair!);
+            await GETOrderBook(pair!);
+            await GETTradeList(pair!);
+            await GETCheckServerTime();
+            await GETExchangeInformation(pair!);
+            await GETRecentTradesList(pair!);
             //Now Old Trade Lookup
         }
         private async Task GETRecentTradesList(string pair)
@@ -31,9 +31,9 @@
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"{content.ToString()}");
         }
-        private async Task GETExchangeInformation()
+        private async Task GETExchangeInformation(string pair)
         {
-            var response = await _httpClient.GetAsync("/api/v3/exchangeInfo?symbol=BNBUSDT");
+            var response = await _httpClient.GetAsync($"/api/v3/exchangeInfo?symbol={pair}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"{content.ToString()}");
@@ -53,24 +53,24 @@
             Console.WriteLine($"Connection status: {response.StatusCode}");
         }
 
-        private async Task GETCoinPrice()
+        private async Task GETCoinPrice(string pair)
         {
-            var response = await _httpClient.GetAsync("/api/v3/avgPrice?symbol=BNBUSDT");
+            var response = await _httpClient.GetAsync($"/api/v3/avgPrice?symbol={pair}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"BNB price: {content.ToString()}");
         }
-        private async Task GETOrderBook()
+        private async Task GETOrderBook(string pair)
         {
-            var response = await _httpClient.GetAsync("/api/v3/depth?symbol=BNBUSDT");
+            var response = await _httpClient.GetAsync($"/api/v3/depth?symbol={pair}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Order Book Depth: {content.Count()}");
             Console.WriteLine(content.ToString()) ;
         }
-        private async Task GETTradeList()
+        private async Task GETTradeList(string pair)
         {
-            var response = await _httpClient.GetAsync("/api/v3/trades?symbol=BNBUSDT");
+            var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={pair}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Trade list: {content.ToString()}");
