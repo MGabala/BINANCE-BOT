@@ -26,6 +26,8 @@
                 Console.WriteLine("5: Recent Trades List");
                 Console.WriteLine("6: Old Trade Lookup (MARKET_DATA)");
                 Console.WriteLine("7: Current Average Price");
+                Console.WriteLine("8: 24hr Ticker Price Change Statistics");
+                Console.WriteLine("9: Symbol Price Ticker");
                 Console.Write("\nPick number to get method: ");
                 int input = Convert.ToInt32(Console.ReadLine());
 
@@ -51,6 +53,12 @@
                         break;
                     case 7:
                         await GETCurrentAveragePrice();
+                        break;
+                    case 8:
+                        await GETDailyHoursChangeStat();
+                        break;
+                    case 9:
+                        await GETSymbolPriceTracker();
                         break;
 
                     default:
@@ -181,6 +189,80 @@
             {
                 Console.WriteLine("\n   Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
+            }
+
+        }
+        private async Task GETDailyHoursChangeStat()
+        {
+            Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
+            Console.Write("Choose pair: ");
+            string pair = Console.ReadLine();
+            if(pair != String.Empty)
+            {
+                try
+                {
+                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={pair}");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"{content.ToString()}");
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine("\nSorry, cannot proceed your request..");
+                    Console.WriteLine(exception.Message);
+                }
+            }
+            else
+            {
+                try
+                {
+                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"{content.ToString()}");
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine("\nSorry, cannot proceed your request..");
+                    Console.WriteLine(exception.Message);
+                }
+            }
+
+        }
+        private async Task GETSymbolPriceTracker()
+        {
+            Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
+            Console.Write("Choose pair: ");
+            string pair = Console.ReadLine();
+            if (pair != String.Empty)
+            {
+                try
+                {
+                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={pair}");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"{content.ToString()}");
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine("\nSorry, cannot proceed your request..");
+                    Console.WriteLine(exception.Message);
+                }
+            }
+            else
+            {
+                try
+                {
+                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"{content.ToString()}");
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine("\nSorry, cannot proceed your request..");
+                    Console.WriteLine(exception.Message);
+                }
             }
 
         }
