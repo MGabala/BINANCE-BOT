@@ -12,18 +12,21 @@
         }
         public async Task Run()
         {
-            await GETCheckConnectionState();
-            await GETCoinPrice();
-            await GETOrderBook();
-            await GETTradeList();
-            await GETCheckServerTime();
-            await GETExchangeInformation();
-            await GETRecentTradesList();
+            Console.WriteLine("Welcome in ROBOT - best cryptocurrencies bot for trading and earning money...");
+            Console.Write("Which pair you are interested in? ");
+            var pair = Console.ReadLine();
+            //await GETCheckConnectionState();
+            //await GETCoinPrice();
+            //await GETOrderBook();
+            //await GETTradeList();
+            //await GETCheckServerTime();
+            //await GETExchangeInformation();
+            await GETRecentTradesList(pair);
             //Now Old Trade Lookup
         }
-        private async Task GETRecentTradesList()
+        private async Task GETRecentTradesList(string pair)
         {
-            var response = await _httpClient.GetAsync("/api/v3/trades?symbol=BNBUSDT");
+            var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={pair}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"{content.ToString()}");
