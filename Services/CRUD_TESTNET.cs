@@ -58,33 +58,65 @@
         {
             Console.Write("Choose pair: ");
             var pair = Console.ReadLine();
-            var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={pair}");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"{content.ToString()}");
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={pair}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"{content.ToString()}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+
         }
         private async Task GETExchangeInformation()
         {
             Console.Write("Choose pair: ");
             var pair = Console.ReadLine();
-            var response = await _httpClient.GetAsync($"/api/v3/exchangeInfo?symbol={pair}");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"{content.ToString()}");
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/v3/exchangeInfo?symbol={pair}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"{content.ToString()}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+
         }
         private async Task GETCheckServerTime()
         {
-            var response = await _httpClient.GetAsync("/api/v3/time");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"{content.ToString()}");
+            try
+            {
+                var response = await _httpClient.GetAsync("/api/v3/time");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"{content.ToString()}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+
         }
 
         private async Task GETCheckConnectionState()
         {
-            var response = await _httpClient.GetAsync("/api/v3/ping");
-            response.EnsureSuccessStatusCode();
-            Console.WriteLine($"Connection status: {response.StatusCode}");
+            try
+            {
+                var response = await _httpClient.GetAsync("/api/v3/ping");
+                response.EnsureSuccessStatusCode();
+                Console.WriteLine($"Connection status: {response.StatusCode}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+
         }
 
         private async Task GETCoinPrice()
@@ -103,29 +135,41 @@
             {
                 Console.WriteLine(exception.Message);
             }
-            finally
-            {
-                Console.WriteLine("Sorry, cannot proceed this request.");
-            }
+
         }
         private async Task GETOrderBook()
         {
             Console.Write("Choose pair: ");
             var pair = Console.ReadLine();
-            var response = await _httpClient.GetAsync($"/api/v3/depth?symbol={pair}");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Order Book Depth: {content.Count()}");
-            Console.WriteLine(content.ToString()) ;
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/v3/depth?symbol={pair}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Order Book Depth: {content.Count()}");
+                Console.WriteLine(content.ToString());
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+
         }
         private async Task GETTradeList()
         {
             Console.Write("Choose pair: ");
             var pair = Console.ReadLine();
-            var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={pair}");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Trade list: {content.ToString()}");
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={pair}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Trade list: {content.ToString()}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
         }
     }
 }
