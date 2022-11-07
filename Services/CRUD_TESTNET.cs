@@ -13,16 +13,31 @@
         public async Task Run()
         {
             Console.WriteLine("Welcome in ROBOT - best cryptocurrencies bot for trading and earning money...");
-            Console.Write("Which pair you are interested in? ");
-            var pair = Console.ReadLine();
-            await GETCheckConnectionState();
-            await GETCoinPrice(pair!);
-            await GETOrderBook(pair!);
-            await GETTradeList(pair!);
-            await GETCheckServerTime();
-            await GETExchangeInformation(pair!);
-            await GETRecentTradesList(pair!);
+            Console.WriteLine("1: Check connection state");
+            Console.WriteLine("2: Check server time");
+
+            var pick = Console.ReadLine();
+            var input = Convert.ToInt32(pick);
+          
+            //await GETCoinPrice(pair!);
+            //await GETOrderBook(pair!);
+            //await GETTradeList(pair!);
+            //await GETExchangeInformation(pair!);
+            //await GETRecentTradesList(pair!);
             //Now Old Trade Lookup
+            switch (input)
+            {
+                case 1:
+                    await GETCheckConnectionState();
+                    break;
+                case 2:
+                    await GETCheckServerTime();
+                    break;
+                default:
+                    Console.WriteLine("Wybierz wartość");
+                    break;
+
+            }
         }
         private async Task GETRecentTradesList(string pair)
         {
