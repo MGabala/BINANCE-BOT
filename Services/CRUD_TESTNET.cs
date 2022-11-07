@@ -3,19 +3,22 @@
     public class CRUD_TESTNET : IIntegrationService
     {
         private static HttpClient _httpClient = new HttpClient();
+        
         public CRUD_TESTNET()
         {
             _httpClient.BaseAddress = new Uri("https://testnet.binance.vision");
             _httpClient.Timeout = new TimeSpan(0, 0, 5);
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.DefaultRequestHeaders.Add("X-MBX-APIKEY", Environment.GetEnvironmentVariable("APIKEY"));
+            _httpClient.DefaultRequestHeaders.Add("SecretKey", Environment.GetEnvironmentVariable("SECRETKEY"));
+            
         }
         public async Task Run()
         {
                 for(; ; )
             {
-                Console.WriteLine("");
-                Console.WriteLine("Welcome in ROBOT - best cryptocurrencies bot for trading and earning money...");
+                Console.WriteLine("\n\nWelcome in ROBOT - best cryptocurrencies bot for trading and earning money...");
                 Console.WriteLine("1: Test Connectivity");
                 Console.WriteLine("2: Check server time");
                 Console.WriteLine("3: Exchange Information");
@@ -23,7 +26,7 @@
                 Console.WriteLine("5: Recent Trades List");
                 Console.WriteLine("6: Old Trade Lookup (MARKET_DATA)");
                 Console.WriteLine("7: Current Average Price");
-                Console.Write("Pick number to get method: ");
+                Console.Write("\nPick number to get method: ");
                 int input = Convert.ToInt32(Console.ReadLine());
 
                 switch (input)
@@ -51,9 +54,12 @@
                         break;
 
                     default:
-                        Console.WriteLine($"Sorry, {input} not supported yet. Please choose another number.");
+                        Console.WriteLine($"\nSorry, {input} not supported yet. Please choose another number.");
                         break;
                 }
+                Console.WriteLine("\n\nPress enter to clean window");
+                Console.ReadKey();
+                Console.Clear();
             }
         }
         private async Task GETTestConnectivity()
@@ -62,11 +68,12 @@
             {
                 var response = await _httpClient.GetAsync("/api/v3/ping");
                 response.EnsureSuccessStatusCode();
-                Console.WriteLine($"Connection status: {response.StatusCode}");
+                Console.WriteLine($"\nConnection status: {response.StatusCode}");
+               
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Sorry, cannot proceed your request..");
+                Console.WriteLine("\nSorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -78,11 +85,11 @@
                 var response = await _httpClient.GetAsync("/api/v3/time");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"{content.ToString()}");
+                Console.WriteLine($"\n{content.ToString()}");
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Sorry, cannot proceed your request..");
+                Console.WriteLine("\nSorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -100,7 +107,7 @@
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Sorry, cannot proceed your request..");
+                Console.WriteLine("\nSorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
         }
@@ -113,12 +120,12 @@
                 var response = await _httpClient.GetAsync($"/api/v3/depth?symbol={pair}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Order Book Depth: {content.Count()}");
+                Console.WriteLine($"\nOrder Book Depth: {content.Count()}");
                 Console.WriteLine(content.ToString());
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Sorry, cannot proceed your request..");
+                Console.WriteLine("\nSorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -132,11 +139,11 @@
                 var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={pair}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Trade list: {content.ToString()}");
+                Console.WriteLine($"\nTrade list: {content.ToString()}");
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Sorry, cannot proceed your request..");
+                Console.WriteLine("\nSorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
         }
@@ -149,11 +156,11 @@
                 var response = await _httpClient.GetAsync($"/api/v3/historicalTrades?symbol={pair}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"{content.ToString()}");
+                Console.WriteLine($"\n{content.ToString()}");
             }
             catch(Exception exception)
             {
-                Console.WriteLine("Sorry, cannot proceed your request..");
+                Console.WriteLine("\nSorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -168,11 +175,11 @@
                 var response = await _httpClient.GetAsync($"/api/v3/avgPrice?symbol={pair}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Average price for {pair}:  {content.ToString()}");
+                Console.WriteLine($"\nAverage price for {pair}:  {content.ToString()}");
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Sorry, cannot proceed your request..");
+                Console.WriteLine("\n   Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
