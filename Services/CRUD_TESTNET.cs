@@ -12,45 +12,60 @@
         }
         public async Task Run()
         {
-            //await CheckConnectionState();
-            //await GetCoinPrice();
-            //await GetOrderBook();
-            //await GetTradeList();
-            //await CheckConnection();
-            await CheckServerTime();
-
+            await GETCheckConnectionState();
+            await GETCoinPrice();
+            await GETOrderBook();
+            await GETTradeList();
+            await GETCheckServerTime();
+            await GETExchangeInformation();
+            await GETRecentTradesList();
+            //Now Old Trade Lookup
         }
-
-        private async Task CheckServerTime()
+        private async Task GETRecentTradesList()
+        {
+            var response = await _httpClient.GetAsync("/api/v3/trades?symbol=BNBUSDT");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"{content.ToString()}");
+        }
+        private async Task GETExchangeInformation()
+        {
+            var response = await _httpClient.GetAsync("/api/v3/exchangeInfo?symbol=BNBUSDT");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"{content.ToString()}");
+        }
+        private async Task GETCheckServerTime()
         {
             var response = await _httpClient.GetAsync("/api/v3/time");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Server Time: {content.ToString()}");
+            Console.WriteLine($"{content.ToString()}");
         }
 
-        private async Task CheckConnectionState()
+        private async Task GETCheckConnectionState()
         {
             var response = await _httpClient.GetAsync("/api/v3/ping");
             response.EnsureSuccessStatusCode();
             Console.WriteLine($"Connection status: {response.StatusCode}");
         }
 
-        private async Task GetCoinPrice()
+        private async Task GETCoinPrice()
         {
             var response = await _httpClient.GetAsync("/api/v3/avgPrice?symbol=BNBUSDT");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"BNB price: {content.ToString()}");
         }
-        private async Task GetOrderBook()
+        private async Task GETOrderBook()
         {
             var response = await _httpClient.GetAsync("/api/v3/depth?symbol=BNBUSDT");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Order Book Depth: {content.Count()}");
+            Console.WriteLine(content.ToString()) ;
         }
-        private async Task GetTradeList()
+        private async Task GETTradeList()
         {
             var response = await _httpClient.GetAsync("/api/v3/trades?symbol=BNBUSDT");
             response.EnsureSuccessStatusCode();
