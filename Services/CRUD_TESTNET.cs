@@ -12,14 +12,24 @@
         }
         public async Task Run()
         {
-            await CheckConnection();
-            await GetCoinPrice();
-            await GetOrderBook();
-            await GetTradeList();
+            //await CheckConnectionState();
+            //await GetCoinPrice();
+            //await GetOrderBook();
+            //await GetTradeList();
+            //await CheckConnection();
+            await CheckServerTime();
 
         }
 
-        private async Task CheckConnection()
+        private async Task CheckServerTime()
+        {
+            var response = await _httpClient.GetAsync("/api/v3/time");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Server Time: {content.ToString()}");
+        }
+
+        private async Task CheckConnectionState()
         {
             var response = await _httpClient.GetAsync("/api/v3/ping");
             response.EnsureSuccessStatusCode();
