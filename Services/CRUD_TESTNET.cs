@@ -67,6 +67,7 @@
             }
             catch(Exception exception)
             {
+                Console.WriteLine("Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -84,6 +85,7 @@
             }
             catch(Exception exception)
             {
+                Console.WriteLine("Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -99,6 +101,7 @@
             }
             catch(Exception exception)
             {
+                Console.WriteLine("Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -114,6 +117,7 @@
             }
             catch(Exception exception)
             {
+                Console.WriteLine("Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -133,6 +137,7 @@
             }
             catch(Exception exception)
             {
+                Console.WriteLine("Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -151,6 +156,7 @@
             }
             catch(Exception exception)
             {
+                Console.WriteLine("Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
 
@@ -168,6 +174,7 @@
             }
             catch(Exception exception)
             {
+                Console.WriteLine("Sorry, cannot proceed your request..");
                 Console.WriteLine(exception.Message);
             }
         }
