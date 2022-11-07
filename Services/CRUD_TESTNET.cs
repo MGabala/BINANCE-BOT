@@ -50,7 +50,6 @@
                         await GETRecentTradesList();
                         break;
                     default:
-                        Console.WriteLine("Choose...");
                         break;
                 }
             }
@@ -93,10 +92,21 @@
             Console.Write("Choose pair: ");
             var pair = Console.ReadLine();
 
-            var response = await _httpClient.GetAsync($"/api/v3/avgPrice?symbol={pair}");
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Average price for {pair}:  {content.ToString()}");
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/v3/avgPrice?symbol={pair}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Average price for {pair}:  {content.ToString()}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+            finally
+            {
+                Console.WriteLine("Sorry, cannot proceed this request.");
+            }
         }
         private async Task GETOrderBook()
         {
