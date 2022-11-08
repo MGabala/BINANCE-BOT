@@ -1,4 +1,8 @@
-﻿namespace ROBOT.Services
+﻿using System.Net.Http.Json;
+
+using Newtonsoft.Json;
+
+namespace ROBOT.Services
 {
     public class CRUD_TESTNET : IIntegrationService
     {
@@ -16,7 +20,9 @@
         }
         public async Task Run()
         {
-                for(; ; )
+            string? signature = Environment.GetEnvironmentVariable("SIGNATURE");
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            for (; ; )
             {
                 Console.WriteLine("\n\nWelcome in ROBOT - best cryptocurrencies bot for trading and earning money...");
                 Console.WriteLine("1: Test Connectivity");
@@ -28,8 +34,9 @@
                 Console.WriteLine("7: Current Average Price");
                 Console.WriteLine("8: 24hr Ticker Price Change Statistics");
                 Console.WriteLine("9: Symbol Price Ticker");
+                Console.WriteLine("10: New Order (TRADE)");
                 Console.Write("\nPick number to get method: ");
-                int input = Convert.ToInt32(Console.ReadLine());
+                int input = System.Convert.ToInt32(Console.ReadLine());
 
                 switch (input)
                 {
@@ -60,6 +67,10 @@
                     case 9:
                         await GETSymbolPriceTracker();
                         break;
+                    case 10:
+                        await POSTNewOrder(signature!, timestamp!);
+                        break;
+                       
 
                     default:
                         Console.WriteLine($"\nSorry, {input} not supported yet. Please choose another number.");
@@ -81,8 +92,8 @@
             }
             catch (Exception exception)
             {
-                Console.WriteLine("\nSorry, cannot proceed your request..");
-                Console.WriteLine(exception.Message);
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                 
             }
 
         }
@@ -97,8 +108,8 @@
             }
             catch (Exception exception)
             {
-                Console.WriteLine("\nSorry, cannot proceed your request..");
-                Console.WriteLine(exception.Message);
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                 
             }
 
         }
@@ -115,8 +126,8 @@
             }
             catch (Exception exception)
             {
-                Console.WriteLine("\nSorry, cannot proceed your request..");
-                Console.WriteLine(exception.Message);
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                 
             }
         }
         private async Task GETOrderBook()
@@ -133,8 +144,8 @@
             }
             catch (Exception exception)
             {
-                Console.WriteLine("\nSorry, cannot proceed your request..");
-                Console.WriteLine(exception.Message);
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                 
             }
 
         }
@@ -151,8 +162,8 @@
             }
             catch (Exception exception)
             {
-                Console.WriteLine("\nSorry, cannot proceed your request..");
-                Console.WriteLine(exception.Message);
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                 
             }
         }
         private async Task GETOldTradeLookup()
@@ -168,8 +179,8 @@
             }
             catch(Exception exception)
             {
-                Console.WriteLine("\nSorry, cannot proceed your request..");
-                Console.WriteLine(exception.Message);
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                 
             }
 
         }
@@ -187,8 +198,8 @@
             }
             catch (Exception exception)
             {
-                Console.WriteLine("\n   Sorry, cannot proceed your request..");
-                Console.WriteLine(exception.Message);
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+
             }
 
         }
@@ -196,7 +207,7 @@
         {
             Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
             Console.Write("Choose pair: ");
-            string pair = Console.ReadLine();
+            string? pair = Console.ReadLine();
             if(pair != String.Empty)
             {
                 try
@@ -208,8 +219,8 @@
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine("\nSorry, cannot proceed your request..");
-                    Console.WriteLine(exception.Message);
+                    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                     
                 }
             }
             else
@@ -223,8 +234,8 @@
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine("\nSorry, cannot proceed your request..");
-                    Console.WriteLine(exception.Message);
+                    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                     
                 }
             }
 
@@ -233,7 +244,7 @@
         {
             Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
             Console.Write("Choose pair: ");
-            string pair = Console.ReadLine();
+            string? pair = Console.ReadLine();
             if (pair != String.Empty)
             {
                 try
@@ -245,8 +256,8 @@
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine("\nSorry, cannot proceed your request..");
-                    Console.WriteLine(exception.Message);
+                    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                     
                 }
             }
             else
@@ -260,9 +271,44 @@
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine("\nSorry, cannot proceed your request..");
-                    Console.WriteLine(exception.Message);
+                    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                     
                 }
+            }
+
+        }
+        private async Task POSTNewOrder(string signature, long timestamp)
+        {
+            // EXAMPLE: XRPBUSD
+            Console.Write("Choose pair: "); string? pair = Console.ReadLine();
+            //EXAMPLE: BUY / SELL
+            Console.Write("Side: "); string? side = Console.ReadLine();
+            //EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
+            Console.Write("Type: "); string? type = Console.ReadLine();
+            //EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
+            Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
+            //EXAMPLE: Quantity: 100
+            Console.Write("Quantity: "); string? quantity = Console.ReadLine();
+            //EXAMPLE: Price: 350
+            Console.Write("Price: "); string? price = Console.ReadLine();
+            string? query = $"symbol={pair}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
+
+            try
+            {
+                var response = await _httpClient.PostAsync("/api/v3/order?", query);
+                //response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                var statusCode = response.StatusCode;
+                var xd = response.RequestMessage;
+                
+                Console.WriteLine($"{content.ToString()}");
+                Console.WriteLine($"{statusCode.ToString()}");
+                Console.WriteLine($"{xd.ToString()}");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+
             }
 
         }
