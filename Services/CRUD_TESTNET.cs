@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
 
 using Newtonsoft.Json;
 
@@ -16,7 +17,6 @@ namespace ROBOT.Services
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _httpClient.DefaultRequestHeaders.Add("X-MBX-APIKEY", Environment.GetEnvironmentVariable("APIKEY"));
             _httpClient.DefaultRequestHeaders.Add("SecretKey", Environment.GetEnvironmentVariable("SECRETKEY"));
-            
         }
         public async Task Run()
         {
@@ -35,6 +35,7 @@ namespace ROBOT.Services
                 Console.WriteLine("8: 24hr Ticker Price Change Statistics");
                 Console.WriteLine("9: Symbol Price Ticker");
                 Console.WriteLine("10: New Order (TRADE)");
+                Console.WriteLine("11: Current Open Orders (USER_DATA)");
                 Console.Write("\nPick number to get method: ");
                 int input = System.Convert.ToInt32(Console.ReadLine());
 
@@ -70,8 +71,12 @@ namespace ROBOT.Services
                     case 10:
                         await POSTNewOrder(signature!, timestamp!);
                         break;
-                       
-
+                    case 11:
+                        await GETCurrentOpenOwnOrders(timestamp!, signature!);
+                        break;
+                    case 12:
+                        await GETAllOwnOrders(timestamp!, signature!);
+                        break;
                     default:
                         Console.WriteLine($"\nSorry, {input} not supported yet. Please choose another number.");
                         break;
@@ -292,18 +297,63 @@ namespace ROBOT.Services
             //EXAMPLE: Price: 350
             Console.Write("Price: "); string? price = Console.ReadLine();
             string? query = $"symbol={pair}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
+            var request = new
+            {
+                symbol = pair,
+                side = side,
+                type = type,
+                timeInForce = timeInForce,
+                quantity = quantity,
+                price = price,
+                timestamp = timestamp,
+                signature = signature
+            };
+            var json = JsonConvert.SerializeObject(request);
+            var stringContent = new StringContent(json);
+            try
+            {
+
+                var response = await _httpClient.PostAsync("/api/v3/order?", stringContent);
+                //response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"{content.ToString()}");
+                Console.WriteLine($"{response.Headers}");
+                Console.WriteLine($"{response.StatusCode}");
+
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+
+            }
+
+        }
+        private async Task GETCurrentOpenOwnOrders(long timestamp, string signature)
+        {
+           
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/v3/openOrders?timestamp={timestamp}&signature={signature}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"\nCurrent Open Orders {content}");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+
+            }
+
+        }
+        private async Task GETAllOwnOrders(long timestamp, string signature)
+        {
 
             try
             {
-                var response = await _httpClient.PostAsync("/api/v3/order?", query);
-                //response.EnsureSuccessStatusCode();
+                var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
+                response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                var statusCode = response.StatusCode;
-                var xd = response.RequestMessage;
-                
-                Console.WriteLine($"{content.ToString()}");
-                Console.WriteLine($"{statusCode.ToString()}");
-                Console.WriteLine($"{xd.ToString()}");
+                Console.WriteLine($"\nCurrent Open Orders {content}");
             }
             catch (Exception exception)
             {
