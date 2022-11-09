@@ -84,65 +84,6 @@ namespace ROBOT.Services
 
                 }
 
-                #region SwitchStatement
-                //int input = System.Convert.ToInt32(Console.ReadLine());
-                //switch (input)
-                //{
-                //    //Market section
-                //    case 1:
-                //        await GETTestConnectivity();
-                //        break;
-                //    case 2:
-                //        await GETCheckServerTime();
-                //        break;
-                //    case 3:
-                //        await GETExchangeInformation();
-                //        break;
-                //    case 4:
-                //        await GETOrderBook();
-                //        break;
-                //    case 5:
-                //        await GETRecentTradeList();
-                //        break;
-                //    case 6:
-                //        await GETOldTradeLookup();
-                //        break;
-                //    case 7:
-                //        await GETCurrentAveragePrice();
-                //        break;
-                //    case 8:
-                //        await GETDailyHoursChangeStat();
-                //        break;
-                //    case 9:
-                //        await GETSymbolPriceTracker();
-                //        break;
-                //    //Trade section
-                //    case 0:
-                //        await POSTNewTstOrder(signature!, timestamp!);
-                //        break;
-                //    case 10:
-                //        await POSTNewOrder(signature!, timestamp!);
-                //        break;
-                //    case 11:
-                //        await DELCancelOrder(signature!, timestamp!);
-                //        break;
-                //    case 12:
-                //        await GETCurrentOpenOwnOrders(timestamp!, signature!);
-                //        break;
-                //    case 13:
-                //        await GETAllOwnOrders(timestamp!, signature!);
-                //        break;
-                //    case 14:
-                //        await GETAccountInformation(timestamp!, signature!);
-                //        break;
-                //    case 15:
-                //        await GETAccountTradeList(timestamp!, signature!);
-                //        break;
-                //    default:
-                //        Console.WriteLine($"\nSorry, {input} not supported yet. Please choose another number.");
-                //        break;
-                //}
-                #endregion
 
                 Console.WriteLine("\n\nPress enter to clean window");
                 Console.ReadKey();
