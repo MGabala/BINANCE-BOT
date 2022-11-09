@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 
 using Binance.Common;
 using Binance.Spot;
+using Binance.Spot.Models;
 
 using Newtonsoft.Json;
 
@@ -80,7 +81,9 @@ namespace ROBOT.Services
                     case 9:
                         await GETSymbolPriceTracker();
                         break;
-
+                    case 10:
+                        await POSTNewTstOrder();
+                        break;
 
                 }
 
@@ -334,48 +337,53 @@ namespace ROBOT.Services
         #endregion
 
         #region Trade
-        private async Task POSTNewTstOrder(string signature, long timestamp)
+        private async Task POSTNewTstOrder()
         {
-            // EXAMPLE: XRPBUSD
-            Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
-            //EXAMPLE: BUY / SELL
-            Console.Write("Side: "); string? side = Console.ReadLine();
-            //EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
-            Console.Write("Type: "); string? type = Console.ReadLine();
-            //EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
-            Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
-            //EXAMPLE: Quantity: 100
-            Console.Write("Quantity: "); string? quantity = Console.ReadLine();
-            //EXAMPLE: Price: 350
-            Console.Write("Price: "); string? price = Console.ReadLine();
-            string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
-            var POSTDATA = new Dictionary<object, object>()
-                {
-                    {"symbol",symbol},
-                    {"side",side},
-                    {"type",type},
-                    {"timeInForce",timeInForce},
-                    {"quantity",quantity},
-                    {"price",price},
-                    {"timestamp", timestamp},
-                    {"signature",signature}
-                    };
-            var jsonContent = JsonConvert.SerializeObject(POSTDATA);
-            var stringContent = new StringContent(jsonContent);
-            try
-            {
+            var spotAccountTrade = new SpotAccountTrade(_httpClient, "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
 
-                var response = await _httpClient.PostAsync("/api/v3/order/test?", stringContent);
-                //response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(content.ToString());
+            var result = await spotAccountTrade.TestNewOrder("BNBUSDT", Side.SELL, OrderType.MARKET);
 
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message + Environment.NewLine + exception.InnerException}");
+            #region FromScratch
+            //// EXAMPLE: XRPBUSD
+            //Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
+            ////EXAMPLE: BUY / SELL
+            //Console.Write("Side: "); string? side = Console.ReadLine();
+            ////EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
+            //Console.Write("Type: "); string? type = Console.ReadLine();
+            ////EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
+            //Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
+            ////EXAMPLE: Quantity: 100
+            //Console.Write("Quantity: "); string? quantity = Console.ReadLine();
+            ////EXAMPLE: Price: 350
+            //Console.Write("Price: "); string? price = Console.ReadLine();
+            //string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
+            //var POSTDATA = new Dictionary<object, object>()
+            //    {
+            //        {"symbol",symbol},
+            //        {"side",side},
+            //        {"type",type},
+            //        {"timeInForce",timeInForce},
+            //        {"quantity",quantity},
+            //        {"price",price},
+            //        {"timestamp", timestamp},
+            //        {"signature",signature}
+            //        };
+            //var jsonContent = JsonConvert.SerializeObject(POSTDATA);
+            //var stringContent = new StringContent(jsonContent);
+            //try
+            //{
 
-            }
+            //    var response = await _httpClient.PostAsync("/api/v3/order/test?", stringContent);
+            //    //response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine(content.ToString());
+
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message + Environment.NewLine + exception.InnerException}");
+            //}
+            #endregion
 
         }
         private async Task POSTNewOrder(string signature, long timestamp)
