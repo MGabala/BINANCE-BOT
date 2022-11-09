@@ -21,7 +21,8 @@ namespace ROBOT.Services
         #region Headquarters
         public async Task Run()
         {
-            string? signature = Environment.GetEnvironmentVariable("SIGNATURE");
+            string? signature = "c08b5393cfd1f749e4d669c760437da8084746da81e3a5b0fe6618b8fbe45b68";
+            //string? signature = Environment.GetEnvironmentVariable("SIGNATURE");
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             for (; ; )
             {
@@ -36,12 +37,18 @@ namespace ROBOT.Services
                 Console.WriteLine("8: 24hr Ticker Price Change Statistics");
                 Console.WriteLine("9: Symbol Price Ticker");
                 Console.WriteLine("10: New Order (TRADE)");
-                Console.WriteLine("11: Current Open Orders (USER_DATA)");
+                Console.WriteLine("11: Cancel Order (TRADE)");
+                Console.WriteLine("12: Current Open Orders (USER_DATA)");
+                Console.WriteLine("13: All Orders (USER_DATA)");
+                Console.WriteLine("14: Account Information (USER_DATA)");
+                Console.WriteLine("15: Account Trade List (USER_DATA)");
+                Console.WriteLine("0: POST TEST ORDER");
                 Console.Write("\nPick number to get method: ");
                 int input = System.Convert.ToInt32(Console.ReadLine());
 
                 switch (input)
                 {
+                    //Market section
                     case 1:
                         await GETTestConnectivity();
                         break;
@@ -69,14 +76,27 @@ namespace ROBOT.Services
                     case 9:
                         await GETSymbolPriceTracker();
                         break;
+                    //Trade section
+                    case 0:
+                        await POSTNewTstOrder(signature!, timestamp!);
+                        break;
                     case 10:
                         await POSTNewOrder(signature!, timestamp!);
                         break;
                     case 11:
-                        await GETCurrentOpenOwnOrders(timestamp!, signature!);
+                        await DELCancelOrder(signature!, timestamp!);
                         break;
                     case 12:
+                        await GETCurrentOpenOwnOrders(timestamp!, signature!);
+                        break;
+                    case 13:
                         await GETAllOwnOrders(timestamp!, signature!);
+                        break;
+                    case 14:
+                        await GETAccountInformation(timestamp!, signature!);
+                        break;
+                    case 15: 
+                        await GETAccountTradeList(timestamp!, signature!);
                         break;
                     default:
                         Console.WriteLine($"\nSorry, {input} not supported yet. Please choose another number.");
@@ -289,6 +309,50 @@ namespace ROBOT.Services
         #endregion
 
         #region Trade
+        private async Task POSTNewTstOrder(string signature, long timestamp)
+        {
+            // EXAMPLE: XRPBUSD
+            Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
+            //EXAMPLE: BUY / SELL
+            Console.Write("Side: "); string? side = Console.ReadLine();
+            //EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
+            Console.Write("Type: "); string? type = Console.ReadLine();
+            //EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
+            Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
+            //EXAMPLE: Quantity: 100
+            Console.Write("Quantity: "); string? quantity = Console.ReadLine();
+            //EXAMPLE: Price: 350
+            Console.Write("Price: "); string? price = Console.ReadLine();
+            string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
+            var POSTDATA = new Dictionary<object, object>()
+                {
+                    {"symbol",symbol},
+                    {"side",side},
+                    {"type",type},
+                    {"timeInForce",timeInForce},
+                    {"quantity",quantity},
+                    {"price",price},
+                    {"timestamp", timestamp},
+                    {"signature",signature}
+                    };
+            var jsonContent = JsonConvert.SerializeObject(POSTDATA);
+            var stringContent = new StringContent(jsonContent);
+            try
+            {
+
+                var response = await _httpClient.PostAsync("/api/v3/order/test?", stringContent);
+                //response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(content.ToString());
+
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message + Environment.NewLine + exception.InnerException}");
+
+            }
+
+        }
         private async Task POSTNewOrder(string signature, long timestamp)
         {
             // EXAMPLE: XRPBUSD
@@ -328,7 +392,51 @@ namespace ROBOT.Services
             }
             catch (Exception exception)
             {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message +Environment.NewLine+ exception.InnerException}");
+
+            }
+
+        }
+        private async Task DELCancelOrder(string signature, long timestamp)
+        {
+            // EXAMPLE: XRPBUSD
+            Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
+            //EXAMPLE: BUY / SELL
+            Console.Write("Side: "); string? side = Console.ReadLine();
+            //EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
+            Console.Write("Type: "); string? type = Console.ReadLine();
+            //EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
+            Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
+            //EXAMPLE: Quantity: 100
+            Console.Write("Quantity: "); string? quantity = Console.ReadLine();
+            //EXAMPLE: Price: 350
+            Console.Write("Price: "); string? price = Console.ReadLine();
+            string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
+            var POSTDATA = new Dictionary<object, object>()
+                {
+                    {"symbol",symbol},
+                    {"side",side},
+                    {"type",type},
+                    {"timeInForce",timeInForce},
+                    {"quantity",quantity},
+                    {"price",price},
+                    {"timestamp", timestamp},
+                    {"signature",signature}
+                    };
+            var jsonContent = JsonConvert.SerializeObject(POSTDATA);
+            var stringContent = new StringContent(jsonContent);
+            try
+            {
+
+                var response = await _httpClient.PostAsync("/api/v3/order/test", stringContent);
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(content.ToString());
+
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message + Environment.NewLine + exception.InnerException}");
 
             }
 
@@ -368,6 +476,43 @@ namespace ROBOT.Services
             }
 
         }
+        private async Task GETAccountInformation(long timestamp, string signature)
+        {
+
+            try
+            {
+
+                var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"\nCurrent Open Orders {content}");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+
+            }
+
+        }
+        private async Task GETAccountTradeList(long timestamp, string signature)
+        {
+
+            try
+            {
+
+                var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"\nCurrent Open Orders {content}");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+
+            }
+
+        }
+
         #endregion
     }
 }
