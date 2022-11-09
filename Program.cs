@@ -10,6 +10,7 @@
             {
                 var log = host.Services.GetRequiredService<ILogger<MainClass>>();
                 log.LogInformation("Host created, checking..");
+                
                 await serviceProvider.GetService<IIntegrationService>().Run();
             }
             catch (Exception ex)

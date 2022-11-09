@@ -18,6 +18,7 @@ namespace ROBOT.Services
             _httpClient.DefaultRequestHeaders.Add("X-MBX-APIKEY", Environment.GetEnvironmentVariable("APIKEY"));
             _httpClient.DefaultRequestHeaders.Add("SecretKey", Environment.GetEnvironmentVariable("SECRETKEY"));
         }
+        #region Headquarters
         public async Task Run()
         {
             string? signature = Environment.GetEnvironmentVariable("SIGNATURE");
@@ -86,7 +87,9 @@ namespace ROBOT.Services
                 Console.Clear();
             }
         }
-    #region Market
+        #endregion
+
+        #region Market
         private async Task GETTestConnectivity()
         {
             try
@@ -285,7 +288,7 @@ namespace ROBOT.Services
         }
         #endregion
 
-    #region Trade
+        #region Trade
         private async Task POSTNewOrder(string signature, long timestamp)
         {
             // EXAMPLE: XRPBUSD
