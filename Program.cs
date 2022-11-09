@@ -13,6 +13,7 @@
                 
                 await serviceProvider.GetService<IIntegrationService>().Run();
             }
+            
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);

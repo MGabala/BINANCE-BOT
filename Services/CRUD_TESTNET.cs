@@ -1,6 +1,9 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 
+using Binance.Common;
+using Binance.Spot;
+
 using Newtonsoft.Json;
 
 namespace ROBOT.Services
@@ -14,13 +17,16 @@ namespace ROBOT.Services
             _httpClient.BaseAddress = new Uri("https://testnet.binance.vision");
             _httpClient.Timeout = new TimeSpan(0, 0, 5);
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
             _httpClient.DefaultRequestHeaders.Add("X-MBX-APIKEY", Environment.GetEnvironmentVariable("APIKEY"));
             _httpClient.DefaultRequestHeaders.Add("SecretKey", Environment.GetEnvironmentVariable("SECRETKEY"));
         }
-        #region Headquarters
+
         public async Task Run()
         {
+
+
+
             string? signature = Environment.GetEnvironmentVariable("SIGNATURE");
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             for (; ; )
@@ -43,11 +49,10 @@ namespace ROBOT.Services
                 Console.WriteLine("15: Account Trade List (USER_DATA)");
                 Console.WriteLine("0: POST TEST ORDER");
                 Console.Write("\nPick number to get method: ");
-                int input = System.Convert.ToInt32(Console.ReadLine());
 
+                int input = System.Convert.ToInt32(Console.ReadLine());
                 switch (input)
                 {
-                    //Market section
                     case 1:
                         await GETTestConnectivity();
                         break;
@@ -66,150 +71,204 @@ namespace ROBOT.Services
                     case 6:
                         await GETOldTradeLookup();
                         break;
-                    case 7:
-                        await GETCurrentAveragePrice();
-                        break;
-                    case 8:
-                        await GETDailyHoursChangeStat();
-                        break;
-                    case 9:
-                        await GETSymbolPriceTracker();
-                        break;
-                    //Trade section
-                    case 0:
-                        await POSTNewTstOrder(signature!, timestamp!);
-                        break;
-                    case 10:
-                        await POSTNewOrder(signature!, timestamp!);
-                        break;
-                    case 11:
-                        await DELCancelOrder(signature!, timestamp!);
-                        break;
-                    case 12:
-                        await GETCurrentOpenOwnOrders(timestamp!, signature!);
-                        break;
-                    case 13:
-                        await GETAllOwnOrders(timestamp!, signature!);
-                        break;
-                    case 14:
-                        await GETAccountInformation(timestamp!, signature!);
-                        break;
-                    case 15: 
-                        await GETAccountTradeList(timestamp!, signature!);
-                        break;
-                    default:
-                        Console.WriteLine($"\nSorry, {input} not supported yet. Please choose another number.");
-                        break;
+
                 }
+
+                #region SwitchStatement
+                //int input = System.Convert.ToInt32(Console.ReadLine());
+                //switch (input)
+                //{
+                //    //Market section
+                //    case 1:
+                //        await GETTestConnectivity();
+                //        break;
+                //    case 2:
+                //        await GETCheckServerTime();
+                //        break;
+                //    case 3:
+                //        await GETExchangeInformation();
+                //        break;
+                //    case 4:
+                //        await GETOrderBook();
+                //        break;
+                //    case 5:
+                //        await GETRecentTradeList();
+                //        break;
+                //    case 6:
+                //        await GETOldTradeLookup();
+                //        break;
+                //    case 7:
+                //        await GETCurrentAveragePrice();
+                //        break;
+                //    case 8:
+                //        await GETDailyHoursChangeStat();
+                //        break;
+                //    case 9:
+                //        await GETSymbolPriceTracker();
+                //        break;
+                //    //Trade section
+                //    case 0:
+                //        await POSTNewTstOrder(signature!, timestamp!);
+                //        break;
+                //    case 10:
+                //        await POSTNewOrder(signature!, timestamp!);
+                //        break;
+                //    case 11:
+                //        await DELCancelOrder(signature!, timestamp!);
+                //        break;
+                //    case 12:
+                //        await GETCurrentOpenOwnOrders(timestamp!, signature!);
+                //        break;
+                //    case 13:
+                //        await GETAllOwnOrders(timestamp!, signature!);
+                //        break;
+                //    case 14:
+                //        await GETAccountInformation(timestamp!, signature!);
+                //        break;
+                //    case 15:
+                //        await GETAccountTradeList(timestamp!, signature!);
+                //        break;
+                //    default:
+                //        Console.WriteLine($"\nSorry, {input} not supported yet. Please choose another number.");
+                //        break;
+                //}
+                #endregion
+
                 Console.WriteLine("\n\nPress enter to clean window");
                 Console.ReadKey();
                 Console.Clear();
+                
             }
         }
-        #endregion
 
         #region Market
         private async Task GETTestConnectivity()
         {
-            try
-            {
-                var response = await _httpClient.GetAsync("/api/v3/ping");
-                response.EnsureSuccessStatusCode();
-                Console.WriteLine($"\nConnection status: {response.StatusCode}");
-
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-            }
-           
+            var market = new Market(_httpClient);
+            var result = await market.TestConnectivity();
+            Console.WriteLine(result);
+            #region FromScratch
+            //try
+            //{
+            //    var response = await _httpClient.GetAsync("/api/v3/ping");
+            //    response.EnsureSuccessStatusCode();
+            //    Console.WriteLine($"\nConnection status: {response.StatusCode}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
         }
         private async Task GETCheckServerTime()
         {
-            try
-            {
-                var response = await _httpClient.GetAsync("/api/v3/time");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\n{content.ToString()}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-            }
-
+            var market = new Market(_httpClient);
+            var result = await market.CheckServerTime();
+            Console.WriteLine(result.ToString());
+            #region FromScratch
+            //try
+            //{
+            //    var response = await _httpClient.GetAsync("/api/v3/time");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\n{content.ToString()}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
         }
         private async Task GETExchangeInformation()
         {
             Console.Write("Choose symbol: ");
             var symbol = Console.ReadLine();
-            try
-            {
-                var response = await _httpClient.GetAsync($"/api/v3/exchangeInfo?symbol={symbol}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"{content.ToString()}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-            }
+            var market = new Market(_httpClient);
+            var result = await market.ExchangeInformation(symbol);
+            Console.WriteLine(JsonConvert.DeserializeObject(result));
+            #region FromScratch
+            //try
+            //{
+            //    var response = await _httpClient.GetAsync($"/api/v3/exchangeInfo?symbol={symbol}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"{content.ToString()}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
         }
         private async Task GETOrderBook()
         {
             Console.Write("Choose symbol: ");
             var symbol = Console.ReadLine();
-            try
-            {
-                var response = await _httpClient.GetAsync($"/api/v3/depth?symbol={symbol}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nOrder Book Depth: {content.Count()}");
-                Console.WriteLine(content.ToString());
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            var market = new Market(_httpClient);
+            var result = await market.OrderBook(symbol);
+            Console.WriteLine(JsonConvert.DeserializeObject(result));
 
-            }
-
+            #region FromScratch
+            //Console.Write("Choose symbol: ");
+            //var symbol = Console.ReadLine();
+            //try
+            //{
+            //    var response = await _httpClient.GetAsync($"/api/v3/depth?symbol={symbol}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\nOrder Book Depth: {content.Count()}");
+            //    Console.WriteLine(content.ToString());
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
         }
         private async Task GETRecentTradeList()
         {
             Console.Write("Choose symbol: ");
             var symbol = Console.ReadLine();
-            try
-            {
-                var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={symbol}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nTrade list: {content.ToString()}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-            }
+            var market = new Market(_httpClient);
+            var result = await market.RecentTradesList(symbol);
+            Console.WriteLine(JsonConvert.DeserializeObject(result));
+            #region FromScratch
+            //Console.Write("Choose symbol: ");
+            //var symbol = Console.ReadLine();
+            //try
+            //{
+            //    var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={symbol}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\nTrade list: {content.ToString()}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
         }
         private async Task GETOldTradeLookup()
         {
-            Console.Write("Choose symbol: ");
-            var symbol = Console.ReadLine();
-            try
-            {
-                var response = await _httpClient.GetAsync($"/api/v3/historicalTrades?symbol={symbol}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\n{content.ToString()}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            var market = new Market(_httpClient, "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
 
-            }
+            var result = await market.OldTradeLookup("BNBUSDT");
+
+            #region FromScratch
+            //Console.Write("Choose symbol: ");
+            //var symbol = Console.ReadLine();
+            //try
+            //{
+            //    var response = await _httpClient.GetAsync($"/api/v3/historicalTrades?symbol={symbol}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\n{content.ToString()}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
 
         }
         private async Task GETCurrentAveragePrice()
@@ -379,11 +438,11 @@ namespace ROBOT.Services
                     {"signature",signature}
                     };
             var jsonContent = JsonConvert.SerializeObject(POSTDATA);
-            var stringContent = new StringContent(jsonContent);
+            var stringContent = new StringContent(query);
             try
             {
 
-                var response = await _httpClient.PostAsync("/api/v3/order/test", stringContent);
+                var response = await _httpClient.PostAsync("/api/v3/order?", stringContent);
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(content.ToString());
@@ -511,7 +570,7 @@ namespace ROBOT.Services
             }
 
         }
-
         #endregion
+
     }
 }
