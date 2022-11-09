@@ -71,6 +71,16 @@ namespace ROBOT.Services
                     case 6:
                         await GETOldTradeLookup();
                         break;
+                    case 7:
+                        await GETCurrentAveragePrice();
+                        break;
+                    case 8:
+                        await GETDailyHoursChangeStat();
+                        break;
+                    case 9:
+                        await GETSymbolPriceTracker();
+                        break;
+
 
                 }
 
@@ -275,93 +285,109 @@ namespace ROBOT.Services
         {
             Console.Write("Choose symbol: ");
             var symbol = Console.ReadLine();
+            var market = new Market(_httpClient);
+            var result = await market.CurrentAveragePrice(symbol);
+            Console.WriteLine(JsonConvert.DeserializeObject(result));
 
-            try
-            {
-                var response = await _httpClient.GetAsync($"/api/v3/avgPrice?symbol={symbol}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nAverage price for {symbol}:  {content.ToString()}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-            }
-
+            #region FromScratch
+            //try
+            //{
+            //    var response = await _httpClient.GetAsync($"/api/v3/avgPrice?symbol={symbol}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\nAverage price for {symbol}:  {content.ToString()}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
         }
         private async Task GETDailyHoursChangeStat()
         {
-            Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
             Console.Write("Choose symbol: ");
-            string? symbol = Console.ReadLine();
-            if (symbol != String.Empty)
-            {
-                try
-                {
-                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={symbol}");
-                    response.EnsureSuccessStatusCode();
-                    var content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"{content.ToString()}");
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            var symbol = Console.ReadLine();
+            var market = new Market(_httpClient);
+            var result = await market.TwentyFourHrTickerPriceChangeStatistics(symbol);
+            Console.WriteLine(JsonConvert.DeserializeObject(result));
+            #region FromScratch
+            //Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
+            //Console.Write("Choose symbol: ");
+            //string? symbol = Console.ReadLine();
+            //if (symbol != String.Empty)
+            //{
+            //    try
+            //    {
+            //        var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={symbol}");
+            //        response.EnsureSuccessStatusCode();
+            //        var content = await response.Content.ReadAsStringAsync();
+            //        Console.WriteLine($"{content.ToString()}");
+            //    }
+            //    catch (Exception exception)
+            //    {
+            //        Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
 
-                }
-            }
-            else
-            {
-                try
-                {
-                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr");
-                    response.EnsureSuccessStatusCode();
-                    var content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"{content.ToString()}");
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //    }
+            //}
+            //else
+            //{
+            //    try
+            //    {
+            //        var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr");
+            //        response.EnsureSuccessStatusCode();
+            //        var content = await response.Content.ReadAsStringAsync();
+            //        Console.WriteLine($"{content.ToString()}");
+            //    }
+            //    catch (Exception exception)
+            //    {
+            //        Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
 
-                }
-            }
+            //    }
+            //}
+            #endregion
 
         }
         private async Task GETSymbolPriceTracker()
         {
-            Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
             Console.Write("Choose symbol: ");
-            string? symbol = Console.ReadLine();
-            if (symbol != String.Empty)
-            {
-                try
-                {
-                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={symbol}");
-                    response.EnsureSuccessStatusCode();
-                    var content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"{content.ToString()}");
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            var symbol = Console.ReadLine();
+            var market = new Market(_httpClient);
+            var result = await market.SymbolPriceTicker(symbol);
+            Console.WriteLine(JsonConvert.DeserializeObject(result));
+            #region FromScratch
+            //Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
+            //Console.Write("Choose symbol: ");
+            //string? symbol = Console.ReadLine();
+            //if (symbol != String.Empty)
+            //{
+            //    try
+            //    {
+            //        var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={symbol}");
+            //        response.EnsureSuccessStatusCode();
+            //        var content = await response.Content.ReadAsStringAsync();
+            //        Console.WriteLine($"{content.ToString()}");
+            //    }
+            //    catch (Exception exception)
+            //    {
+            //        Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
 
-                }
-            }
-            else
-            {
-                try
-                {
-                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr");
-                    response.EnsureSuccessStatusCode();
-                    var content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"{content.ToString()}");
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-                }
-            }
+            //    }
+            //}
+            //else
+            //{
+            //    try
+            //    {
+            //        var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr");
+            //        response.EnsureSuccessStatusCode();
+            //        var content = await response.Content.ReadAsStringAsync();
+            //        Console.WriteLine($"{content.ToString()}");
+            //    }
+            //    catch (Exception exception)
+            //    {
+            //        Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //    }
+            //}
+            #endregion
 
         }
         #endregion
