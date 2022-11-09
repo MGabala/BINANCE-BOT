@@ -8,7 +8,7 @@ namespace ROBOT.Services
     public class CRUD_TESTNET : IIntegrationService
     {
         private static HttpClient _httpClient = new HttpClient();
-        
+
         public CRUD_TESTNET()
         {
             _httpClient.BaseAddress = new Uri("https://testnet.binance.vision");
@@ -86,6 +86,7 @@ namespace ROBOT.Services
                 Console.Clear();
             }
         }
+    #region Market
         private async Task GETTestConnectivity()
         {
             try
@@ -93,14 +94,14 @@ namespace ROBOT.Services
                 var response = await _httpClient.GetAsync("/api/v3/ping");
                 response.EnsureSuccessStatusCode();
                 Console.WriteLine($"\nConnection status: {response.StatusCode}");
-               
+
             }
             catch (Exception exception)
             {
                 Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                 
-            }
 
+            }
+           
         }
         private async Task GETCheckServerTime()
         {
@@ -114,17 +115,17 @@ namespace ROBOT.Services
             catch (Exception exception)
             {
                 Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                 
+
             }
 
         }
         private async Task GETExchangeInformation()
         {
-            Console.Write("Choose pair: ");
-            var pair = Console.ReadLine();
+            Console.Write("Choose symbol: ");
+            var symbol = Console.ReadLine();
             try
             {
-                var response = await _httpClient.GetAsync($"/api/v3/exchangeInfo?symbol={pair}");
+                var response = await _httpClient.GetAsync($"/api/v3/exchangeInfo?symbol={symbol}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"{content.ToString()}");
@@ -132,16 +133,16 @@ namespace ROBOT.Services
             catch (Exception exception)
             {
                 Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                 
+
             }
         }
         private async Task GETOrderBook()
         {
-            Console.Write("Choose pair: ");
-            var pair = Console.ReadLine();
+            Console.Write("Choose symbol: ");
+            var symbol = Console.ReadLine();
             try
             {
-                var response = await _httpClient.GetAsync($"/api/v3/depth?symbol={pair}");
+                var response = await _httpClient.GetAsync($"/api/v3/depth?symbol={symbol}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"\nOrder Book Depth: {content.Count()}");
@@ -150,17 +151,17 @@ namespace ROBOT.Services
             catch (Exception exception)
             {
                 Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                 
+
             }
 
         }
         private async Task GETRecentTradeList()
         {
-            Console.Write("Choose pair: ");
-            var pair = Console.ReadLine();
+            Console.Write("Choose symbol: ");
+            var symbol = Console.ReadLine();
             try
             {
-                var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={pair}");
+                var response = await _httpClient.GetAsync($"/api/v3/trades?symbol={symbol}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"\nTrade list: {content.ToString()}");
@@ -168,38 +169,38 @@ namespace ROBOT.Services
             catch (Exception exception)
             {
                 Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                 
+
             }
         }
         private async Task GETOldTradeLookup()
         {
-            Console.Write("Choose pair: ");
-            var pair = Console.ReadLine();
+            Console.Write("Choose symbol: ");
+            var symbol = Console.ReadLine();
             try
             {
-                var response = await _httpClient.GetAsync($"/api/v3/historicalTrades?symbol={pair}");
+                var response = await _httpClient.GetAsync($"/api/v3/historicalTrades?symbol={symbol}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"\n{content.ToString()}");
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                 
+
             }
 
         }
         private async Task GETCurrentAveragePrice()
         {
-            Console.Write("Choose pair: ");
-            var pair = Console.ReadLine();
+            Console.Write("Choose symbol: ");
+            var symbol = Console.ReadLine();
 
             try
             {
-                var response = await _httpClient.GetAsync($"/api/v3/avgPrice?symbol={pair}");
+                var response = await _httpClient.GetAsync($"/api/v3/avgPrice?symbol={symbol}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nAverage price for {pair}:  {content.ToString()}");
+                Console.WriteLine($"\nAverage price for {symbol}:  {content.ToString()}");
             }
             catch (Exception exception)
             {
@@ -211,13 +212,13 @@ namespace ROBOT.Services
         private async Task GETDailyHoursChangeStat()
         {
             Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
-            Console.Write("Choose pair: ");
-            string? pair = Console.ReadLine();
-            if(pair != String.Empty)
+            Console.Write("Choose symbol: ");
+            string? symbol = Console.ReadLine();
+            if (symbol != String.Empty)
             {
                 try
                 {
-                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={pair}");
+                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={symbol}");
                     response.EnsureSuccessStatusCode();
                     var content = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"{content.ToString()}");
@@ -225,7 +226,7 @@ namespace ROBOT.Services
                 catch (Exception exception)
                 {
                     Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                     
+
                 }
             }
             else
@@ -240,7 +241,7 @@ namespace ROBOT.Services
                 catch (Exception exception)
                 {
                     Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                     
+
                 }
             }
 
@@ -248,13 +249,13 @@ namespace ROBOT.Services
         private async Task GETSymbolPriceTracker()
         {
             Console.WriteLine("-- Leave empty to get whole list [ Press just enter ] --");
-            Console.Write("Choose pair: ");
-            string? pair = Console.ReadLine();
-            if (pair != String.Empty)
+            Console.Write("Choose symbol: ");
+            string? symbol = Console.ReadLine();
+            if (symbol != String.Empty)
             {
                 try
                 {
-                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={pair}");
+                    var response = await _httpClient.GetAsync($"/api/v3/ticker/24hr?symbol={symbol}");
                     response.EnsureSuccessStatusCode();
                     var content = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"{content.ToString()}");
@@ -262,7 +263,7 @@ namespace ROBOT.Services
                 catch (Exception exception)
                 {
                     Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                     
+
                 }
             }
             else
@@ -277,15 +278,18 @@ namespace ROBOT.Services
                 catch (Exception exception)
                 {
                     Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-                     
+
                 }
             }
 
         }
+        #endregion
+
+    #region Trade
         private async Task POSTNewOrder(string signature, long timestamp)
         {
             // EXAMPLE: XRPBUSD
-            Console.Write("Choose pair: "); string? pair = Console.ReadLine();
+            Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
             //EXAMPLE: BUY / SELL
             Console.Write("Side: "); string? side = Console.ReadLine();
             //EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
@@ -296,29 +300,27 @@ namespace ROBOT.Services
             Console.Write("Quantity: "); string? quantity = Console.ReadLine();
             //EXAMPLE: Price: 350
             Console.Write("Price: "); string? price = Console.ReadLine();
-            string? query = $"symbol={pair}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
-            var request = new
-            {
-                symbol = pair,
-                side = side,
-                type = type,
-                timeInForce = timeInForce,
-                quantity = quantity,
-                price = price,
-                timestamp = timestamp,
-                signature = signature
-            };
-            var json = JsonConvert.SerializeObject(request);
-            var stringContent = new StringContent(json);
+            string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
+            var POSTDATA = new Dictionary<object, object>()
+                {
+                    {"symbol",symbol},
+                    {"side",side},
+                    {"type",type},
+                    {"timeInForce",timeInForce},
+                    {"quantity",quantity},
+                    {"price",price},
+                    {"timestamp", timestamp},
+                    {"signature",signature}
+                    };
+            var jsonContent = JsonConvert.SerializeObject(POSTDATA);
+            var stringContent = new StringContent(jsonContent);
             try
             {
 
-                var response = await _httpClient.PostAsync("/api/v3/order?", stringContent);
-                //response.EnsureSuccessStatusCode();
+                var response = await _httpClient.PostAsync("/api/v3/order/test", stringContent);
+                response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"{content.ToString()}");
-                Console.WriteLine($"{response.Headers}");
-                Console.WriteLine($"{response.StatusCode}");
+                Console.WriteLine(content.ToString());
 
             }
             catch (Exception exception)
@@ -350,6 +352,7 @@ namespace ROBOT.Services
 
             try
             {
+
                 var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
@@ -362,6 +365,6 @@ namespace ROBOT.Services
             }
 
         }
-
+        #endregion
     }
 }
