@@ -21,8 +21,7 @@ namespace ROBOT.Services
         #region Headquarters
         public async Task Run()
         {
-            string? signature = "c08b5393cfd1f749e4d669c760437da8084746da81e3a5b0fe6618b8fbe45b68";
-            //string? signature = Environment.GetEnvironmentVariable("SIGNATURE");
+            string? signature = Environment.GetEnvironmentVariable("SIGNATURE");
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             for (; ; )
             {
