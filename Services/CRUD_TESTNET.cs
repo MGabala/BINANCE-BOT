@@ -33,6 +33,7 @@ namespace ROBOT.Services
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             for (; ; )
             {
+                #region SwitchStatement
                 Console.WriteLine("\n\nWelcome in ROBOT - best cryptocurrencies bot for trading and earning money...");
                 Console.WriteLine("1: Test Connectivity");
                 Console.WriteLine("2: Check server time");
@@ -107,7 +108,7 @@ namespace ROBOT.Services
                         Console.WriteLine("Something went wrong, try again.");
                         break;
                 }
-
+                #endregion
 
                 Console.WriteLine("\n\nPress enter to clean window");
                 
