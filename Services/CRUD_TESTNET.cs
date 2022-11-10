@@ -26,11 +26,6 @@ namespace ROBOT.Services
 
         public async Task Run()
         {
-
-
-
-            string? signature = Environment.GetEnvironmentVariable("SIGNATURE");
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             for (; ; )
             {
                 #region SwitchStatement
@@ -111,7 +106,6 @@ namespace ROBOT.Services
                 #endregion
 
                 Console.WriteLine("\n\nPress enter to clean window");
-                
                 Console.ReadKey();
                 Console.Clear();
                 
