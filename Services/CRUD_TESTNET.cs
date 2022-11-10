@@ -82,14 +82,35 @@ namespace ROBOT.Services
                     case 9:
                         await GETSymbolPriceTracker();
                         break;
-                    case 10:
+                    case 0:
                         await POSTNewTstOrder();
                         break;
-
+                    case 10:
+                        await POSTNewOrder();
+                        break;
+                    case 11:
+                        await DELCancelOrder();
+                        break;
+                    case 12:
+                        await GETCurrentOpenOwnOrders();
+                        break;
+                    case 13:
+                        await GETAllOwnOrders();
+                        break;
+                    case 14:
+                        await GETAccountInformation();
+                        break;
+                    case 15:
+                        await GETAccountTradeList();
+                        break;
+                    default:
+                        Console.WriteLine("Something went wrong, try again.");
+                        break;
                 }
 
 
                 Console.WriteLine("\n\nPress enter to clean window");
+                
                 Console.ReadKey();
                 Console.Clear();
                 
@@ -342,8 +363,9 @@ namespace ROBOT.Services
         {
             var spotAccountTrade = new SpotAccountTrade(_httpClient,
                 "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
-            var result = await spotAccountTrade.TestNewOrder("BNBUSDT", Side.SELL, OrderType.MARKET, quantity: 3);
-            
+            var result = await spotAccountTrade.TestNewOrder("XRPBUSD", Side.BUY, OrderType.MARKET, quantity: 35);
+            Console.WriteLine(result);
+
                 #region FromScratch
                 //// EXAMPLE: XRPBUSD
                 //Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
@@ -387,163 +409,187 @@ namespace ROBOT.Services
                 #endregion
 
             }
-        private async Task POSTNewOrder(string signature, long timestamp)
+        private async Task POSTNewOrder()
         {
-            // EXAMPLE: XRPBUSD
-            Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
-            //EXAMPLE: BUY / SELL
-            Console.Write("Side: "); string? side = Console.ReadLine();
-            //EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
-            Console.Write("Type: "); string? type = Console.ReadLine();
-            //EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
-            Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
-            //EXAMPLE: Quantity: 100
-            Console.Write("Quantity: "); string? quantity = Console.ReadLine();
-            //EXAMPLE: Price: 350
-            Console.Write("Price: "); string? price = Console.ReadLine();
-            string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
-            var POSTDATA = new Dictionary<object, object>()
-                {
-                    {"symbol",symbol},
-                    {"side",side},
-                    {"type",type},
-                    {"timeInForce",timeInForce},
-                    {"quantity",quantity},
-                    {"price",price},
-                    {"timestamp", timestamp},
-                    {"signature",signature}
-                    };
-            var jsonContent = JsonConvert.SerializeObject(POSTDATA);
-            var stringContent = new StringContent(query);
-            try
-            {
+             var spotAccountTrade = new SpotAccountTrade(_httpClient,
+                "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
+            var result = await spotAccountTrade.NewOrder("XRPBUSD", Side.BUY, OrderType.MARKET, quantity: 35);
+            Console.WriteLine(result);
 
-                var response = await _httpClient.PostAsync("/api/v3/order?", stringContent);
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(content.ToString());
+            #region FromScratch
+            //// EXAMPLE: XRPBUSD
+            //Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
+            ////EXAMPLE: BUY / SELL
+            //Console.Write("Side: "); string? side = Console.ReadLine();
+            ////EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
+            //Console.Write("Type: "); string? type = Console.ReadLine();
+            ////EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
+            //Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
+            ////EXAMPLE: Quantity: 100
+            //Console.Write("Quantity: "); string? quantity = Console.ReadLine();
+            ////EXAMPLE: Price: 350
+            //Console.Write("Price: "); string? price = Console.ReadLine();
+            //string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
+            //var POSTDATA = new Dictionary<object, object>()
+            //    {
+            //        {"symbol",symbol},
+            //        {"side",side},
+            //        {"type",type},
+            //        {"timeInForce",timeInForce},
+            //        {"quantity",quantity},
+            //        {"price",price},
+            //        {"timestamp", timestamp},
+            //        {"signature",signature}
+            //        };
+            //var jsonContent = JsonConvert.SerializeObject(POSTDATA);
+            //var stringContent = new StringContent(query);
+            //try
+            //{
 
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message +Environment.NewLine+ exception.InnerException}");
+            //    var response = await _httpClient.PostAsync("/api/v3/order?", stringContent);
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine(content.ToString());
 
-            }
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message +Environment.NewLine+ exception.InnerException}");
+            //}
+            #endregion
 
         }
-        private async Task DELCancelOrder(string signature, long timestamp)
+        private async Task DELCancelOrder()
         {
-            // EXAMPLE: XRPBUSD
-            Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
-            //EXAMPLE: BUY / SELL
-            Console.Write("Side: "); string? side = Console.ReadLine();
-            //EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
-            Console.Write("Type: "); string? type = Console.ReadLine();
-            //EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
-            Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
-            //EXAMPLE: Quantity: 100
-            Console.Write("Quantity: "); string? quantity = Console.ReadLine();
-            //EXAMPLE: Price: 350
-            Console.Write("Price: "); string? price = Console.ReadLine();
-            string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
-            var POSTDATA = new Dictionary<object, object>()
-                {
-                    {"symbol",symbol},
-                    {"side",side},
-                    {"type",type},
-                    {"timeInForce",timeInForce},
-                    {"quantity",quantity},
-                    {"price",price},
-                    {"timestamp", timestamp},
-                    {"signature",signature}
-                    };
-            var jsonContent = JsonConvert.SerializeObject(POSTDATA);
-            var stringContent = new StringContent(jsonContent);
-            try
-            {
+            //cannot cancel an order via orderId
+            var spotAccountTrade = new SpotAccountTrade(_httpClient,
+                    "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
+            var result = await spotAccountTrade.CancelOrder("BNBBUSD", 1491388);
 
-                var response = await _httpClient.PostAsync("/api/v3/order/test", stringContent);
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(content.ToString());
+            #region FromScratch
+            //// EXAMPLE: XRPBUSD
+            //Console.Write("Choose symbol: "); string? symbol = Console.ReadLine();
+            ////EXAMPLE: BUY / SELL
+            //Console.Write("Side: "); string? side = Console.ReadLine();
+            ////EXAMPLE: LIMIT / MARKET / STOP_LOSS / STOP_LOSS_LIMIT / TAKE_PROFIT / TAKE_PROFIT_LIMIT / LIMIT_MAKER
+            //Console.Write("Type: "); string? type = Console.ReadLine();
+            ////EXAMPLE: GTC (good till canceled) / FOK (fill or kill) / IOC (immediate or cancel)
+            //Console.Write("TimeInForce: "); string? timeInForce = Console.ReadLine();
+            ////EXAMPLE: Quantity: 100
+            //Console.Write("Quantity: "); string? quantity = Console.ReadLine();
+            ////EXAMPLE: Price: 350
+            //Console.Write("Price: "); string? price = Console.ReadLine();
+            //string? query = $"symbol={symbol}&side={side}&type={type}&timeInForce={timeInForce}&quantity={quantity}&price={price}&timestamp={timestamp}&signature={signature}";
+            //var POSTDATA = new Dictionary<object, object>()
+            //    {
+            //        {"symbol",symbol},
+            //        {"side",side},
+            //        {"type",type},
+            //        {"timeInForce",timeInForce},
+            //        {"quantity",quantity},
+            //        {"price",price},
+            //        {"timestamp", timestamp},
+            //        {"signature",signature}
+            //        };
+            //var jsonContent = JsonConvert.SerializeObject(POSTDATA);
+            //var stringContent = new StringContent(jsonContent);
+            //try
+            //{
 
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message + Environment.NewLine + exception.InnerException}");
+            //    var response = await _httpClient.PostAsync("/api/v3/order/test", stringContent);
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine(content.ToString());
 
-            }
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message + Environment.NewLine + exception.InnerException}");
+            //}
+            #endregion
 
         }
-        private async Task GETCurrentOpenOwnOrders(long timestamp, string signature)
+        private async Task GETCurrentOpenOwnOrders()
         {
-           
-            try
-            {
-                var response = await _httpClient.GetAsync($"/api/v3/openOrders?timestamp={timestamp}&signature={signature}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nCurrent Open Orders {content}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-            }
+            var spotAccountTrade = new SpotAccountTrade(_httpClient,
+                        "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
+            var result = await spotAccountTrade.CurrentOpenOrders();
+            #region FromScratch
+            //try
+            //{
+            //    var response = await _httpClient.GetAsync($"/api/v3/openOrders?timestamp={timestamp}&signature={signature}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\nCurrent Open Orders {content}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
 
         }
-        private async Task GETAllOwnOrders(long timestamp, string signature)
+        private async Task GETAllOwnOrders()
         {
+            var spotAccountTrade = new SpotAccountTrade(_httpClient,
+            "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
+            var result = await spotAccountTrade.AllOrders("BNBBUSD");
 
-            try
-            {
+            #region FromScratch
+            //try
+            //{
 
-                var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nCurrent Open Orders {content}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //    var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\nCurrent Open Orders {content}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
+        }
+        private async Task GETAccountInformation()
+        {
+            var spotAccountTrade = new SpotAccountTrade(_httpClient,
+            "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
+            var result = await spotAccountTrade.AccountInformation();
+            #region FromScratch
+            //try
+            //{
 
-            }
+            //    var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\nCurrent Open Orders {content}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
 
         }
-        private async Task GETAccountInformation(long timestamp, string signature)
+        private async Task GETAccountTradeList()
         {
+            var spotAccountTrade = new SpotAccountTrade(_httpClient,
+            "https://testnet.binance.vision", apiKey: Environment.GetEnvironmentVariable("APIKEY"), apiSecret: Environment.GetEnvironmentVariable("SECRETKEY"));
+            var result = await spotAccountTrade.AccountTradeList("BNBBUSD");
+            #region FromScratch
+            //try
+            //{
 
-            try
-            {
-
-                var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nCurrent Open Orders {content}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-            }
-
-        }
-        private async Task GETAccountTradeList(long timestamp, string signature)
-        {
-
-            try
-            {
-
-                var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nCurrent Open Orders {content}");
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
-
-            }
+            //    var response = await _httpClient.GetAsync($"/api/v3/allOrders?symbol=BNBUSDT&timestamp={timestamp}&signature={signature}");
+            //    response.EnsureSuccessStatusCode();
+            //    var content = await response.Content.ReadAsStringAsync();
+            //    Console.WriteLine($"\nCurrent Open Orders {content}");
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine("\nSorry, cannot proceed your request.." + $"\n{exception.Message}");
+            //}
+            #endregion
 
         }
         #endregion
